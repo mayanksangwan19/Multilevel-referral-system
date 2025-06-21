@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Purchase = require('../models/Purchase');
 const Earning = require('../models/Earning');
+const istTime = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
 exports.makePurchase = async (req, res) => {
   const { userId, amount } = req.body;
