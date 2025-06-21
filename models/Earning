@@ -1,0 +1,11 @@
+const mongoose = require('mongoose');
+
+const earningSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // who earned
+  fromUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // whose purchase
+  purchaseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Purchase' },
+  level: Number, // 1 or 2
+  earningAmount: Number,
+}, { timestamps: true });
+
+module.exports = mongoose.model('Earning', earningSchema);
