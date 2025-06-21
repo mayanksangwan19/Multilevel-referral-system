@@ -1,5 +1,5 @@
 
-# 🧩 Multi-Level Referral and Earning System (with Live Updates)
+# 🧩 Multilevel Referral and Earning System (with Live Updates)
 
 A Node.js-based backend system with a minimal frontend interface to simulate a real-world referral program with live earnings updates.
 
@@ -153,7 +153,8 @@ node_modules/
 
 ## 📎 Project Link
 
-[🔗 GitHub Repository](https://github.com/mayanksangwan19/multi-level-referral-system)
+[🔗 GitHub Repository](https://github.com/mayanksangwan19/Multilevel-referral-system)
+
 
 ---
 
