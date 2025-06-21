@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Level Referral System</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    h2 { color: #333; }
+    form { margin-bottom: 30px; }
+    input, button { padding: 8px; margin: 5px 0; width: 100%; }
+    #liveEarnings { background: #f5f5f5; padding: 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Multi-Level Referral System</h1>
+
+  <h2>🔐 Register User</h2>
+  <form id="registerForm">
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Your Email" required />
+    <input type="text" name="referredBy" placeholder="Referrer ID (optional)" />
+    <button type="submit">Register</button>
+  </form>
+
+  <h2>🛒 Make a Purchase</h2>
+  <form id="purchaseForm">
+    <input type="text" name="userId" placeholder="Your User ID" required />
+    <input type="number" name="amount" placeholder="Amount (min ₹1000)" required />
+    <button type="submit">Purchase</button>
+  </form>
+
+  <h2>📈 Live Earnings</h2>
+  <form id="connectSocketForm">
+    <input type="text" name="watchUserId" placeholder="Enter Your User ID to Watch Earnings" required />
+    <button type="submit">Connect for Live Updates</button>
+  </form>
+  <div id="liveEarnings">No updates yet...</div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    const API_BASE = 'http://localhost:5000';
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = e.target.name.value;
+      const email = e.target.email.value;
+      const referredBy = e.target.referredBy.value;
+
+      const response = await fetch(`${API_BASE}/api/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          ...(referredBy && { referredBy })
+        })
+      });
+
+      const result = await response.json();
+      alert(result.message || 'User registered!');
+    });
+
+    document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = e.target.userId.value;
+      const amount = parseFloat(e.target.amount.value);
+
+      const response = await fetch(`${API_BASE}/api/purchase/buy`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, amount })
+      });
+
+      const result = await response.json();
+      alert(result.message || 'Purchase complete!');
+    });
+
+    // Socket.IO for live earnings
+    const socket = io(API_BASE);
+
+    document.getElementById('connectSocketForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userId = e.target.watchUserId.value;
+      socket.emit('join', userId);
+      document.getElementById('liveEarnings').innerText = 'Listening for earnings...';
+    });
+
+    socket.on('earning', (data) => {
+      const msg = `💸 Earned ₹${data.amount} from ${data.from} (Level ${data.level}) at ${new Date(data.time).toLocaleTimeString()}`;
+      const div = document.getElementById('liveEarnings');
+      div.innerText = msg + '\n' + div.innerText;
+    });
+  </script>
+</body>
+</html>

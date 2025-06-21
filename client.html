@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Earnings</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+</head>
+<body>
+  <h2>👀 Real-Time Earnings</h2>
+  <div id="log"></div>
+
+  <script>
+    const userId = "68542910af1080a9af36b440"; // Replace with YOUR MongoDB _id (parent or grandparent)
+
+    const socket = io("http://localhost:5000");  // Your backend
+
+    socket.on("connect", () => {
+      console.log("Connected!", socket.id);
+      socket.emit("join", userId);  // Join the room for your ID
+    });
+
+    socket.on("earning", (data) => {
+      console.log("New Earning:", data);
+      const log = document.getElementById("log");
+      const entry = document.createElement("p");
+      entry.innerText = `💰 ₹${data.amount} earned from ${data.from} (Level ${data.level}) at ${new Date(data.time).toLocaleTimeString()}`;
+      log.appendChild(entry);
+    });
+  </script>
+</body>
+</html>
